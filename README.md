@@ -1,5 +1,5 @@
 # Finder-Shortest-Path-Graph-DAG
-    Polish:
+   Polish:
        Graf  dag  ważony  G  jest  opisany  z  pomocą list  sąsiedztwa  (zapis(u,r) oznacza, ze na krawędzi do sąsiada u mamy wagę r):
             Adj[a]=(b,3);
             Adj[b]=(c,2);
@@ -11,7 +11,7 @@
             Adj[h]=(a,4), (b,2), (g,5).
         Oblicz porządek sortowania topologicznego na wierzchołkach grafu G i wykorzystaj ten porządek do obliczenia najkrótszych  ścieżek z wierzchołka a.
     
-    English:
+   English:
        The weighted graph G is described with the help of a neighborhood list (note (u,r) means that on the edge to the neighbor u has a weight r):
             Adj[a]=(b,3);
             Adj[b]=(c,2);

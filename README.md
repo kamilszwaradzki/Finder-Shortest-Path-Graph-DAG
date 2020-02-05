@@ -1,6 +1,6 @@
 # Finder-Shortest-Path-Graph-DAG
     Polish:
-        Problem  5.   Graf  dag  ważony  G  jest  opisany  z  pomocą list  sąsiedztwa  (zapis(u,r) oznacza, ze na krawędzi do sąsiada u mamy wagę r):
+       Graf  dag  ważony  G  jest  opisany  z  pomocą list  sąsiedztwa  (zapis(u,r) oznacza, ze na krawędzi do sąsiada u mamy wagę r):
             Adj[a]=(b,3);
             Adj[b]=(c,2);
             Adj[c]=(d,4);

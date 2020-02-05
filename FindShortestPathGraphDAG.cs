@@ -1,37 +1,69 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+
+/*
+    Polish:
+        Problem  5.   Graf  dag  ważony  G  jest  opisany  z  pomocą list  sąsiedztwa  (zapis(u,r) oznacza, ze na krawędzi do sąsiada u mamy wagę r):
+            Adj[a]=(b,3);
+            Adj[b]=(c,2);
+            Adj[c]=(d,4);
+            Adj[d]= (e,3);
+            Adj[e]=∅;
+            Adj[f]=(d,5), (e,2);
+            Adj[g]=(b,3), (c,6), (f,4);
+            Adj[h]=(a,4), (b,2), (g,5).
+        Oblicz porządek sortowania topologicznego na wierzchołkach grafu G i wykorzystaj ten porządek do obliczenia najkrótszych  ścieżek z wierzchołka a.
+    
+    English:
+       The weighted graph G is described with the help of a neighborhood list (note (u,r) means that on the edge to the neighbor u has a weight r):
+            Adj[a]=(b,3);
+            Adj[b]=(c,2);
+            Adj[c]=(d,4);
+            Adj[d]= (e,3);
+            Adj[e]=∅;
+            Adj[f]=(d,5), (e,2);
+            Adj[g]=(b,3), (c,6), (f,4);
+            Adj[h]=(a,4), (b,2), (g,5).
+        Calculate the order of topological sorting at the vertices of graph G and use this order to calculate the shortest paths from vertex a.
+*/
+
 
 namespace FindShortestPathGraphDAG
 {
     class AdjListNode
     {
-        public int v;
+        public int vertex;
         public int weight;
-        public AdjListNode(int _v, int w)
+
+        public AdjListNode(int v, int w)
         {
-            v = _v;
+            vertex = v;
             weight = w;
         }
     };
 
 
+    // Class to represent a graph using adjacency list representation
+
     class Graph
     {
-        readonly List<char> edges = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' };
+        private const int maxValue = int.MaxValue;
         public int _V; // No. of vertices'
         public List<List<AdjListNode>> adj;
 
         public Graph(int V)
+
         {
             _V = V;
-            adj = new List<List<AdjListNode>>(V);
+
+            adj = new List<List<AdjListNode>>();
             for (int i = 0; i < V; i++)
             {
                 adj.Add(new List<AdjListNode>());
             }
-
         }
+
+        // function to add an edge to graph
 
         public void addEdge(int u, int v, int weight)
 
@@ -42,16 +74,21 @@ namespace FindShortestPathGraphDAG
 
         }
 
+        // A function used by shortestPath
+
         public void topologicalSortUtil(int v, bool[] visited, Stack<int> stack)
 
         {
-            visited[v] = true;
 
+            // Mark the current node as visited
+
+            visited[v] = true;
+            // Recur for all the vertices adjacent to this vertex
             foreach (var i in adj[v])
             {
                 AdjListNode node = i;
-                if (!visited[node.v])
-                    topologicalSortUtil(node.v, visited, stack);
+                if (!visited[node.vertex])
+                    topologicalSortUtil(node.vertex, visited, stack);
             }
 
             stack.Push(v);
@@ -59,80 +96,111 @@ namespace FindShortestPathGraphDAG
         }
 
 
+        // Finds shortest paths from given source vertex
+
         public void shortestPath(int s)
+
         {
 
             Stack<int> stack = new Stack<int>();
+
             int[] dist = new int[_V];
+
+
+
+            // Mark all the vertices as not visited
+
             bool[] visited = new bool[_V];
+
             for (int i = 0; i < _V; i++)
                 visited[i] = false;
 
+
+
+            // Call the recursive helper function to store Topological Sort
+
+            // starting from all vertices one by one
+
             for (int i = 0; i < _V; i++)
-            {
                 if (visited[i] == false)
                     topologicalSortUtil(i, visited, stack);
-            }
 
+
+            // Initialize distances to all vertices as infinite and distance
+
+            // to source as 0
 
             for (int i = 0; i < _V; i++)
-            { dist[i] = int.MaxValue; }
-
+                dist[i] = int.MaxValue;
             dist[s] = 0;
+
+
+
+            // Process vertices in topological order
 
             while (stack.Count != 0)
             {
 
-                int u = stack.Peek();
+                // Get the next vertex from topological order
 
+                int u = stack.Peek();
                 stack.Pop();
 
+                // Update distances of all adjacent vertices
+
                 if (dist[u] != int.MaxValue)
-
-                {
-                    for (int i = 0; i < adj[u].Count; i++)
-                    {
-                        if (dist[adj[u][i].v] > dist[u] + adj[u][i].weight)
-                        { 
-							dist[adj[u][i].v] = dist[u] + adj[u][i].weight; 
-						}
-                    }
-                }
-
+                    foreach (var i in adj[u])
+                        if (dist[i.vertex] > dist[u] + i.weight)
+                            dist[i.vertex] = dist[u] + i.weight;
             }
 
 
+
+            // Print the calculated shortest distances
 
             for (int i = 0; i < _V; i++)
             {
-                if (dist[i] == Int32.MaxValue) { Console.WriteLine("To " + edges[i] + " : INF "); } 
-				else { Console.WriteLine("To " + edges[i] + " : " + dist[i] + " "); }
+                if (dist[i] == maxValue)
+                    Console.WriteLine("To " + edges[i] + " : INF ");
+                else
+                    Console.WriteLine("To " + edges[i] + " : " + dist[i] + " ");
             }
 
         }
+        public enum Vertex { a , b, c, d, e, f, g, h }
+        public static readonly IList<char> edges = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h' }.AsReadOnly();
+
         public static void Main(string[] args)
         {
-            Graph g = new Graph(8);
-            g.addEdge(0, 1, 3); // Adj[a] = (b, 3);
-            g.addEdge(1, 2, 2); // Adj[b] = (c, 2)
-            g.addEdge(2, 3, 4); // Adj[c] = (d, 4);
-            g.addEdge(3, 4, 3); //Adj[d] = (e, 3);
-            //g.addEdge(4, null, null); // Adj[e] =∅;
-            g.addEdge(5, 3, 5); // Adj[f] = (d, 5), (e, 2);
-            g.addEdge(5, 4, 2);
-            g.addEdge(6, 1, 3); //  Adj[g] = (b, 3), (c, 6), (f, 4); 
-            g.addEdge(6, 2, 6);
-            g.addEdge(6, 5, 4);
-            g.addEdge(7, 0, 4); // Adj[h] = (a, 4), (b, 2), (g, 5).
-            g.addEdge(7, 1, 2);
-            g.addEdge(7, 6, 5);
+            int a = (int)Vertex.a,
+                b = (int)Vertex.b,
+                c = (int)Vertex.c,
+                d = (int)Vertex.d,
+                e = (int)Vertex.e,
+                f = (int)Vertex.f,
+                g = (int)Vertex.g,
+                h = (int)Vertex.h;
 
+            Graph G = new Graph(8);
+
+            G.addEdge(a, b, 3); // Adj[a] = (b, 3)
+            G.addEdge(b, c, 2); // Adj[b] = (c, 2)
+            G.addEdge(c, d, 4); // Adj[c] = (d, 4)
+            G.addEdge(d, e, 3); // Adj[d] = (e, 3)
+            G.addEdge(f, d, 5); // Adj[f] = (d, 5)
+            G.addEdge(f, e, 2); // Adj[f] = (e, 2)
+            G.addEdge(g, b, 3); // Adj[g] = (b, 3)
+            G.addEdge(g, c, 6); // Adj[g] = (c, 6)
+            G.addEdge(g, f, 4); // Adj[g] = (f, 4)
+            G.addEdge(h, a, 4); // Adj[h] = (a, 4)
+            G.addEdge(h, b, 2); // Adj[h] = (b, 2)
+            G.addEdge(h, g, 5); // Adj[h] = (g, 5)
 
             int s = 0;
 
-            Console.WriteLine("Following are shortest distances from source " + g.edges[0]);
+            Console.WriteLine("Following are shortest distances from source/vertex " + edges[0] + ":");
 
-            g.shortestPath(s);
+            G.shortestPath(s);
             Console.ReadKey();
         }
 
